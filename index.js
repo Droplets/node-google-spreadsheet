@@ -67,6 +67,9 @@ module.exports = function( ss_key, auth_id, options ){
   this.getInfo = function( cb ){
     self.makeFeedRequest( ["worksheets", ss_key], 'GET', null, function(err, data, xml) {
       if ( err ) return cb( err );
+      if (data===true) {
+        return cb(new Error('No response to getInfo call'))
+      }
       var ss_data = {
         title: data.title["_"],
         updated: data.updated,
@@ -101,6 +104,9 @@ module.exports = function( ss_key, auth_id, options ){
 
     self.makeFeedRequest( ["list", ss_key, worksheet_id], 'GET', query, function(err, data, xml) {
       if ( err ) return cb( err );
+      if (data===true) {
+        return cb(new Error('No response to getRows call'))
+      }
 
       // gets the raw xml for each entry -- this is passed to the row object so we can do updates on it later
       var entries_xml = xml.match(/<entry[^>]*>([\s\S]*?)<\/entry>/g);
@@ -143,6 +149,9 @@ module.exports = function( ss_key, auth_id, options ){
 
     self.makeFeedRequest(["cells", ss_key, worksheet_id], 'GET', query, function (err, data, xml) {
       if (err) return cb(err);
+      if (data===true) {
+        return cb(new Error('No response to getCells call'))
+      }
 
       var cells = [];
       var entries = forceArray(data['entry']);
